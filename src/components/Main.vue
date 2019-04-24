@@ -1,5 +1,13 @@
 <template>
   <div class="main">
+    <ul class="sort">
+      <li :class="this.order==='asc'? 'is-active' : ''">
+        <button @click="toggleSort('asc')">오름차순</button>
+      </li>
+      <li :class="this.order==='desc'? 'is-active' : ''">
+        <button @click="toggleSort('desc')">내림차순</button>
+      </li>
+    </ul>
     <ul class="contents">
       <li v-for="item in printList" :key="item.no">
         <content-item v-if="item.email"
@@ -56,12 +64,11 @@ export default {
           console.log(error)
         })
     },
-    fetchContentList ({order}) {
+    fetchContentList () {
       this.page++
-      this.order = order
-      axios.get(`http://comento.cafe24.com/request.php?page=${this.page}&ord='${this.order}'&catecory=${this.checkedCategory}`)
+      axios.get(`http://comento.cafe24.com/request.php?page=${this.page}&ord=${this.order}&catecory=${this.checkedCategory}`)
         .then(function ({data}) {
-          this.contentList = this.contentList.concat(data.list)
+          this.contentList = data.list
           this.page % 4 === 1 ? this.fetchAdsList() : this.makeList()
         }.bind(this))
         .catch(error => {
@@ -72,7 +79,7 @@ export default {
       this.adsPage++
       axios.get(`http://comento.cafe24.com/ads.php?page=${this.adsPage}`)
         .then(function ({data}) {
-          this.adsList = this.adsList.concat(data.list)
+          this.adsList = data.list
           this.makeList()
         }.bind(this))
     },
@@ -86,9 +93,27 @@ export default {
           ? this.printList.concat(contentList.splice(0, 2))
           : this.printList.concat(contentList.splice(0, 4)).concat(adsList.splice(0, 1))
       }
+    },
+    resetData () {
+      this.page = 0
+      this.adsPage = 0
+      this.contentList = []
+      this.adsList = []
+      this.printList = []
+    },
+    toggleSort (order) {
+      if (this.order === order) return false
+      this.order = this.order === 'asc' ? 'desc' : 'asc'
+      this.resetData()
+      this.fetchContentList()
     }
   }
 }
 </script>
-<style scoped>
+<style lang="less" scoped>
+  .sort {
+    li.is-active button {
+      color: red;
+    }
+  }
 </style>
