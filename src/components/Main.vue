@@ -1,5 +1,13 @@
 <template>
   <div class="main">
+    <button class="filter" @click="toggleFilterModal">필터</button>
+    <filter-modal
+      v-show="showFilterModal"
+      :categoryList="categoryList"
+      :checkedCategory.sync="checkedCategory"
+      :showFilterModal.sync="showFilterModal"
+    >
+    </filter-modal>
     <ul class="sort">
       <li :class="this.order==='asc'? 'is-active' : ''">
         <button @click="toggleSort('asc')">오름차순</button>
@@ -22,8 +30,8 @@
         <ad-item v-else
           :contents="item.contents"
           :img="item.img"
-          :title="item.title"
-        ></ad-item>
+          :title="item.title">
+        </ad-item>
       </li>
     </ul>
   </div>
@@ -33,10 +41,12 @@
 import axios from 'axios'
 import contentItem from './ContentItem'
 import adItem from './AdItem'
+import FilterModal from './FilterModal'
+
 export default {
   name: 'Main',
   components: {
-    contentItem, adItem
+    contentItem, adItem, FilterModal
   },
   created () {
     this.fetchContentList({order: 'asc'})
@@ -47,11 +57,18 @@ export default {
       page: 0,
       adsPage: 0,
       order: 'asc',
+      showFilterModal: false,
       categoryList: [],
       checkedCategory: '1,2,3',
       contentList: [],
       adsList: [],
       printList: []
+    }
+  },
+  watch: {
+    checkedCategory: function () {
+      this.resetData()
+      this.fetchContentList()
     }
   },
   methods: {
@@ -66,7 +83,7 @@ export default {
     },
     fetchContentList () {
       this.page++
-      axios.get(`http://comento.cafe24.com/request.php?page=${this.page}&ord=${this.order}&catecory=${this.checkedCategory}`)
+      axios.get(`http://comento.cafe24.com/request.php?page=${this.page}&ord=${this.order}&category=${this.checkedCategory}`)
         .then(function ({data}) {
           this.contentList = data.list
           this.page % 4 === 1 ? this.fetchAdsList() : this.makeList()
@@ -82,6 +99,9 @@ export default {
           this.adsList = data.list
           this.makeList()
         }.bind(this))
+        .catch(error => {
+          console.log(error)
+        })
     },
     makeList () {
       // 짝수 페이지에서 list에 2개 먼저 붙여넣기 필요 > 무한 스크롤하면서 추가하기
@@ -106,6 +126,9 @@ export default {
       this.order = this.order === 'asc' ? 'desc' : 'asc'
       this.resetData()
       this.fetchContentList()
+    },
+    toggleFilterModal () {
+      this.showFilterModal = !this.showFilterModal
     }
   }
 }
