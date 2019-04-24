@@ -17,7 +17,7 @@
       </li>
     </ul>
     <ul class="contents">
-      <li v-for="item in printList" :key="item.no">
+      <li v-for="item in printList" :key="item.email ? 'content' + item.no : 'ad' + item.no">
         <content-item v-if="item.email"
           :categoryList="categoryList"
           :category="item.category_no"
@@ -52,12 +52,20 @@ export default {
     this.fetchContentList({order: 'asc'})
     this.fetchCategory()
   },
+  mounted () {
+    window.scrollTo(0, 0)
+    window.addEventListener('scroll', this.handleScroll)
+  },
+  destroyed () {
+    window.removeEventListener('scroll', this.handleScroll)
+  },
   data () {
     return {
       page: 0,
       adsPage: 0,
       order: 'asc',
       showFilterModal: false,
+      isLoading: false,
       categoryList: [],
       checkedCategory: '1,2,3',
       contentList: [],
@@ -72,6 +80,7 @@ export default {
     }
   },
   methods: {
+    // 카테고리 리스트 불러오기
     fetchCategory () {
       axios.get('http://comento.cafe24.com/category.php')
         .then(function ({data}) {
@@ -81,17 +90,20 @@ export default {
           console.log(error)
         })
     },
+    // 컨텐츠 리스트 불러오기
     fetchContentList () {
       this.page++
       axios.get(`http://comento.cafe24.com/request.php?page=${this.page}&ord=${this.order}&category=${this.checkedCategory}`)
         .then(function ({data}) {
           this.contentList = data.list
+          // 콘텐츠리스트 40개당 광고리스트 호출 1회 필요
           this.page % 4 === 1 ? this.fetchAdsList() : this.makeList()
         }.bind(this))
         .catch(error => {
           console.log(error)
         })
     },
+    // 광고 리스트 불러오기
     fetchAdsList () {
       this.adsPage++
       axios.get(`http://comento.cafe24.com/ads.php?page=${this.adsPage}`)
@@ -103,17 +115,26 @@ export default {
           console.log(error)
         })
     },
+    // 출력하기 위해 콘텐츠와 광고를 합친 배열 만들기
     makeList () {
-      // 짝수 페이지에서 list에 2개 먼저 붙여넣기 필요 > 무한 스크롤하면서 추가하기
-      const {contentList, adsList} = this
-      // let listCount = (page * 10) - 10
+      const {contentList, adsList, page} = this
       while (contentList.length > 0) {
-        this.printList =
-        contentList.length < 4
-          ? this.printList.concat(contentList.splice(0, 2))
-          : this.printList.concat(contentList.splice(0, 4)).concat(adsList.splice(0, 1))
+        // 페이지가 홀수일 때는 마지막에 콘텐츠가 2개 남고, 짝수일 때는 처음 2개 이후에 광고 아이템이 추가되어야 한다.
+        if (page % 2) {
+          this.printList =
+          contentList.length < 4
+            ? this.printList.concat(contentList.splice(0, 2))
+            : this.printList.concat(contentList.splice(0, 4)).concat(adsList.splice(0, 1))
+        } else {
+          this.printList =
+          contentList.length % 4
+            ? this.printList.concat(contentList.splice(0, 2)).concat(adsList.splice(0, 1))
+            : this.printList.concat(contentList.splice(0, 4)).concat(adsList.splice(0, 1))
+        }
       }
+      this.changeLoadingStatus(false)
     },
+    // 설정이 바뀔 때 데이터 초기화
     resetData () {
       this.page = 0
       this.adsPage = 0
@@ -121,14 +142,35 @@ export default {
       this.adsList = []
       this.printList = []
     },
+    // 오름차순, 내림차순 정렬 변경
     toggleSort (order) {
       if (this.order === order) return false
       this.order = this.order === 'asc' ? 'desc' : 'asc'
       this.resetData()
       this.fetchContentList()
     },
+    // 필터 모달 토글
     toggleFilterModal () {
       this.showFilterModal = !this.showFilterModal
+    },
+    // 무한 스크롤 이벤트
+    handleScroll () {
+      const scrollHeight = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight)
+      const scrollTop = Math.max(document.documentElement.scrollTop, document.body.scrollTop)
+      const clientHeight = document.documentElement.clientHeight
+      if (scrollTop + clientHeight >= scrollHeight - 300) {
+        // 데이터를 불러오는 중에 데이터 요청하지 않음
+        if (!this.isLoading) {
+          this.changeLoadingStatus(true)
+          this.fetchContentList()
+        } else {
+          return false
+        }
+      }
+    },
+    // 로딩 표시를 위한 값
+    changeLoadingStatus (bool) {
+      this.isLoading = bool
     }
   }
 }
