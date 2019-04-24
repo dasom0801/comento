@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import 'es6-promise/auto'
 
 Vue.config.productionTip = false
 
