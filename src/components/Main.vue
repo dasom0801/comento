@@ -1,12 +1,15 @@
 <template>
   <div class="main container">
     <div class="row justify-content-between mb-3">
-      <button class="filter col-2" data-toggle="modal" data-target="#filter-modal">필터</button>
-      <filter-modal
-        :categoryList="categoryList"
-        :checkedCategory.sync="checkedCategory"
-      >
-      </filter-modal>
+      <div class="row">
+        <button class="filter mr-2 btn btn-primary" data-toggle="modal" data-target="#filter-modal">필터</button>
+        <p class="py-2"> 적용 필터: {{checkedCategoryName}}</p>
+        <filter-modal
+          :categoryList="categoryList"
+          :checkedCategory.sync="checkedCategory"
+        >
+        </filter-modal>
+      </div>
       <ul class="sort row">
         <li :class="this.order==='asc'? 'is-active' : ''">
           <button @click="toggleSort('asc')">오름차순</button>
@@ -70,6 +73,12 @@ export default {
       contentList: [],
       adsList: [],
       printList: []
+    }
+  },
+  computed: {
+    checkedCategoryName () {
+      return this.categoryList.filter(category => this.checkedCategory.indexOf(category.no) > -1)
+        .map(category => category.name).join(', ')
     }
   },
   watch: {
