@@ -3,14 +3,13 @@
     <div class="row justify-content-between mb-3">
       <div class="row">
         <button class="filter mr-2 btn btn-primary" data-toggle="modal" data-target="#filter-modal">필터</button>
-        <p class="py-2"> 적용 필터: {{checkedCategoryName}}</p>
+        <p class="py-2"> {{checkedCategoryName}}</p>
         <filter-modal
           :categoryList="categoryList"
-          :checkedCategory.sync="checkedCategory"
-        >
+          :checkedCategory.sync="checkedCategory">
         </filter-modal>
       </div>
-      <ul class="sort row">
+      <ul class="sort row justify-content-end">
         <li :class="this.order==='asc'? 'is-active' : ''">
           <button @click="toggleSort('asc')">오름차순</button>
         </li>
@@ -38,7 +37,9 @@
       </li>
     </ul>
     <div class="loading" v-show="isLoading">
-      <p>로딩중</p>
+      <div class="spinner-border text-light" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
     </div>
   </div>
 </template>
@@ -145,7 +146,7 @@ export default {
       }
       setTimeout(() => {
         this.changeLoadingStatus(false)
-      }, 500)
+      }, 1000)
     },
     // 설정이 바뀔 때 데이터 초기화
     resetData () {
@@ -207,14 +208,14 @@ export default {
       width: 100vw;
       height: 100vh;
       background: rgba(0,0,0,0.4);
-      p{
+      .spinner-border{
         position: absolute;
         left: 50%;
         top: 50%;
-        transform: translate(-50%, -50%);
-        color: #fff;
-        font-weight: bold;
-        font-size: 4rem;
+        margin-left: -1.5rem;
+        margin-top: -1.5rem;
+        width: 3rem;
+        height: 3rem;
       }
     }
   }
