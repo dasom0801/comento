@@ -65,7 +65,6 @@ export default {
   data () {
     return {
       page: 0,
-      adsPage: 0,
       order: 'asc',
       isLoading: false,
       categoryList: [],
@@ -104,8 +103,7 @@ export default {
       axios.get(`http://comento.cafe24.com/request.php?page=${this.page}&ord=${this.order}&category=${this.checkedCategory}`)
         .then(function ({data}) {
           this.contentList = data.list
-          // 콘텐츠리스트 40개당 광고리스트 호출 1회 필요
-          this.page % 4 === 1 ? this.fetchAdsList() : this.makeList()
+          this.fetchAdsList()
         }.bind(this))
         .catch(error => {
           console.log(error)
@@ -113,8 +111,10 @@ export default {
     },
     // 광고 리스트 불러오기
     fetchAdsList () {
-      this.adsPage = this.adsPage === 3 ? 1 : this.adsPage + 1
-      axios.get(`http://comento.cafe24.com/ads.php?page=${this.adsPage}`)
+      // 광고는 랜덤으로 호출
+      const limit = this.page % 2 ? 2 : 3
+      const adsPage = limit === 2 ? Math.floor(Math.random() * 15) + 1 : Math.floor(Math.random() * 10) + 1
+      axios.get(`http://comento.cafe24.com/ads.php?page=${adsPage}&limit=${limit}`)
         .then(function ({data}) {
           this.adsList = data.list
           this.makeList()
