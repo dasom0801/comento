@@ -1,15 +1,15 @@
 <template>
   <router-link class="content-item" :to="{name: 'Detail', params: {id: no}}">
-    <div class="row justify-content-between border-bottom">
-      <p class="category col-2">{{categoryName}}</p>
-      <p class="no col-1">{{no}}</p>
+    <div class="row justify-content-between border-bottom p-2">
+      <p class="category">{{categoryName}}</p>
+      <p class="no">{{no}}</p>
     </div>
-    <div class="row pt-2 pb-2">
-      <p class="email col-2 border-right">{{email}}</p>
-      <p class="date col-3">{{update}}</p>
+    <div class="row p-2 pl-4">
+      <p class="email pr-2 border-right">{{email}}</p>
+      <p class="date pl-2">{{update}}</p>
     </div>
-    <p class="title h2">{{title}}</p>
-    <p class="contents">{{contents}}</p>
+    <p class="title h2 text-truncate pl-2" :title="title">{{title}}</p>
+    <p class="contents p-2" :title="contents">{{contents.length > 450 ? contents.slice(0, 450) + '...' : contents}}</p>
   </router-link>
 </template>
 <script>
