@@ -1,23 +1,23 @@
 <template>
-  <div class="main">
-    <button class="filter" @click="toggleFilterModal">필터</button>
-    <filter-modal
-      v-show="showFilterModal"
-      :categoryList="categoryList"
-      :checkedCategory.sync="checkedCategory"
-      :showFilterModal.sync="showFilterModal"
-    >
-    </filter-modal>
-    <ul class="sort">
-      <li :class="this.order==='asc'? 'is-active' : ''">
-        <button @click="toggleSort('asc')">오름차순</button>
-      </li>
-      <li :class="this.order==='desc'? 'is-active' : ''">
-        <button @click="toggleSort('desc')">내림차순</button>
-      </li>
-    </ul>
+  <div class="main container">
+    <div class="row justify-content-between mb-3">
+      <button class="filter col-2" data-toggle="modal" data-target="#filter-modal">필터</button>
+      <filter-modal
+        :categoryList="categoryList"
+        :checkedCategory.sync="checkedCategory"
+      >
+      </filter-modal>
+      <ul class="sort row">
+        <li :class="this.order==='asc'? 'is-active' : ''">
+          <button @click="toggleSort('asc')">오름차순</button>
+        </li>
+        <li :class="this.order==='desc'? 'is-active' : ''">
+          <button @click="toggleSort('desc')">내림차순</button>
+        </li>
+      </ul>
+    </div>
     <ul class="contents">
-      <li v-for="item in printList" :key="item.email ? 'content' + item.no : 'ad' + item.no">
+      <li class="card mb-4 p-3" v-for="item in printList" :key="item.email ? 'content' + item.no : 'ad' + item.no">
         <content-item v-if="item.email"
           :categoryList="categoryList"
           :category="item.category_no"
@@ -64,7 +64,6 @@ export default {
       page: 0,
       adsPage: 0,
       order: 'asc',
-      showFilterModal: false,
       isLoading: false,
       categoryList: [],
       checkedCategory: '1,2,3',
@@ -149,16 +148,12 @@ export default {
       this.resetData()
       this.fetchContentList()
     },
-    // 필터 모달 토글
-    toggleFilterModal () {
-      this.showFilterModal = !this.showFilterModal
-    },
     // 무한 스크롤 이벤트
     handleScroll () {
       const scrollHeight = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight)
       const scrollTop = Math.max(document.documentElement.scrollTop, document.body.scrollTop)
       const clientHeight = document.documentElement.clientHeight
-      if (scrollTop + clientHeight >= scrollHeight - 300) {
+      if (scrollTop + clientHeight >= scrollHeight - 200) {
         // 데이터를 불러오는 중에 데이터 요청하지 않음
         if (!this.isLoading) {
           this.changeLoadingStatus(true)
@@ -176,9 +171,19 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-  .sort {
-    li.is-active button {
-      color: red;
+  .main {
+    padding: 15px;
+    .row {
+      padding: 0 15px;
+    }
+    .sort {
+      li button {
+        background: none;
+        border: none;
+      }
+      li.is-active button {
+        color: red;
+      }
     }
   }
 </style>

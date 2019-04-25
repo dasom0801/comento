@@ -1,10 +1,14 @@
 <template>
   <router-link class="content-item" :to="{name: 'Detail', params: {id: no}}">
-    <p class="category">{{categoryName}}</p>
-    <p class="no">{{no}}</p>
-    <p class="email">{{email}}</p>
-    <p class="date">{{update}}</p>
-    <p class="title">{{title}}</p>
+    <div class="row justify-content-between border-bottom">
+      <p class="category col-2">{{categoryName}}</p>
+      <p class="no col-1">{{no}}</p>
+    </div>
+    <div class="row pt-2 pb-2">
+      <p class="email col-2 border-right">{{email}}</p>
+      <p class="date col-3">{{update}}</p>
+    </div>
+    <p class="title h2">{{title}}</p>
     <p class="contents">{{contents}}</p>
   </router-link>
 </template>

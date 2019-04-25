@@ -4,6 +4,9 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import 'es6-promise/auto'
+import 'bootstrap'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import './assets/reset.less'
 
 Vue.config.productionTip = false
 
