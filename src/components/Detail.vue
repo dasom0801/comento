@@ -1,18 +1,25 @@
 <template>
-  <div class="detail">
-    <div class="article">
-      <h2 class="title">{{title}}</h2>
-      <p>{{email}}</p>
-      <p>{{date}}</p>
+  <div class="detail card container my-2 pb-2">
+    <div class="card-body mb-3">
+      <h2 class="title h2">{{title}}</h2>
+      <div class="row px-3 mb-2 justify-content-between">
+        <p>{{email}}</p>
+        <p>{{date}}</p>
+      </div>
       <p>{{contents}}</p>
     </div>
-    <ul class="replies" v-if="replies.length">
-      <li v-for="reply in replies" :key="reply.no">
-        <p>{{reply.email}}</p>
-        <p>{{reply.updated_at}}</p>
-        <p>{{reply.contents}}</p>
-      </li>
-    </ul>
+    <div class="replies" v-if="replies.length">
+      <h3 class="h3">댓글</h3>
+      <ul class="list-group">
+        <li class="list-group-item" v-for="reply in replies" :key="reply.no">
+          <div class="row px-3 mb-2 justify-content-between">
+            <p>{{reply.email}}</p>
+            <p>{{reply.updated_at}}</p>
+          </div>
+          <p>{{reply.contents}}</p>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
