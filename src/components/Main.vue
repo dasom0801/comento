@@ -17,7 +17,7 @@
       </ul>
     </div>
     <ul class="contents">
-      <li class="card mb-4 p-3" v-for="item in printList" :key="item.email ? 'content' + item.no : 'ad' + item.no">
+      <li class="card mb-4 pl-3 pr-3" v-for="(item, index) in printList" :key="item.email ? 'content' + item.no : 'ad' + index">
         <content-item v-if="item.email"
           :categoryList="categoryList"
           :category="item.category_no"
@@ -104,7 +104,7 @@ export default {
     },
     // 광고 리스트 불러오기
     fetchAdsList () {
-      this.adsPage++
+      this.adsPage = this.adsPage === 3 ? 1 : this.adsPage + 1
       axios.get(`http://comento.cafe24.com/ads.php?page=${this.adsPage}`)
         .then(function ({data}) {
           this.adsList = data.list
