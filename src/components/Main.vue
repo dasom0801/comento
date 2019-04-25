@@ -37,6 +37,9 @@
         </ad-item>
       </li>
     </ul>
+    <div class="loading" v-show="isLoading">
+      <p>로딩중</p>
+    </div>
   </div>
 </template>
 
@@ -140,7 +143,9 @@ export default {
             : this.printList.concat(contentList.splice(0, 4)).concat(adsList.splice(0, 1))
         }
       }
-      this.changeLoadingStatus(false)
+      setTimeout(() => {
+        this.changeLoadingStatus(false)
+      }, 500)
     },
     // 설정이 바뀔 때 데이터 초기화
     resetData () {
@@ -192,6 +197,24 @@ export default {
       }
       li.is-active button {
         color: red;
+      }
+    }
+    .loading {
+      position: fixed;
+      z-index: 10000;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.4);
+      p{
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        color: #fff;
+        font-weight: bold;
+        font-size: 4rem;
       }
     }
   }
