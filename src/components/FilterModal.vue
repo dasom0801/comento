@@ -8,18 +8,23 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <ul class="modal-body">
-          <li v-for="category in categoryList" :key="category.no">
-            <input
-              type="checkbox"
-              ref="categoryCehck"
-              :name="'category'+ category.no"
-              :value="category.no">
-              {{ category.name }}
-          </li>
-        </ul>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" @click="saveCategory">저장</button>
+        <div class="modal-body">
+          <ul class="row justify-content-around">
+            <li v-for="category in categoryList" :key="category.no">
+              <input
+                type="checkbox"
+                ref="categoryCehck"
+                :name="'category'+ category.no"
+                :value="category.no">
+                {{ category.name }}
+            </li>
+          </ul>
+          <p class="alert alert-warning mt-2" role="alert" v-show="showAlert">
+            필터를 선택해주세요.
+          </p>
+        </div>
+        <div class="modal-footer row ml-2 mr-2">
+          <button type="button" class="btn btn-primary offset-md-10" @click="saveCategory">저장</button>
         </div>
       </div>
     </div>
@@ -34,18 +39,33 @@ export default {
     categoryList: Array,
     checkedCategory: String
   },
+  data () {
+    return {
+      showAlert: false
+    }
+  },
   mounted () {
     $('#filter-modal').on('show.bs.modal', this.checkCategory)
   },
   methods: {
     saveCategory () {
-      this.$emit('update:checkedCategory',
-        this.$refs.categoryCehck.filter(input => input.checked).map(input => input.value).join(',')
-      )
-      $('#filter-modal').modal('hide')
+      if (!this.$refs.categoryCehck.filter(input => input.checked).length) {
+        this.toggleAlert(true)
+        return false
+      } else {
+        this.$emit('update:checkedCategory',
+          this.$refs.categoryCehck.filter(input => input.checked).map(input => input.value).join(',')
+        )
+        this.toggleAlert(false)
+        $('#filter-modal').modal('hide')
+      }
+    },
+    toggleAlert (bool) {
+      this.showAlert = bool
     },
     // 체크박스 동적 연결, 사용자가 저장하지 않고 닫은 경우에 대한 대응
     checkCategory () {
+      this.toggleAlert(false)
       this.$refs.categoryCehck.forEach(input => {
         input.checked = this.checkedCategory.indexOf(input.value) > -1
       })
