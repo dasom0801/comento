@@ -62,16 +62,16 @@ export default {
     contentItem, adItem, FilterModal
   },
   created () {
-    this.fetchContentList({order: 'asc'})
-    this.fetchCategory()
     !localStorage.getItem('category') && this.setCategory('1,2,3')
     !localStorage.getItem('order') && this.setOrder('asc')
+    this.getCategory()
+    this.getOrder()
+    this.fetchContentList()
+    this.fetchCategory()
   },
   mounted () {
     window.scrollTo(0, 0)
     window.addEventListener('scroll', this.handleScroll)
-    this.getCategory()
-    this.getOrder()
   },
   destroyed () {
     window.removeEventListener('scroll', this.handleScroll)
