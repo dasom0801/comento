@@ -3,8 +3,8 @@
     <div class="card-body mb-3">
       <h2 class="title h2">{{title}}</h2>
       <div class="row px-3 mb-2 justify-content-between">
-        <p>{{email}}</p>
-        <p>{{date}}</p>
+        <p class="email">{{email}}</p>
+        <p class="date">{{date}}</p>
       </div>
       <p>{{contents}}</p>
     </div>
@@ -13,8 +13,8 @@
       <ul class="list-group">
         <li class="list-group-item" v-for="reply in replies" :key="reply.no">
           <div class="row px-3 mb-2 justify-content-between">
-            <p>{{reply.email}}</p>
-            <p>{{reply.updated_at}}</p>
+            <p class="email">{{reply.email}}</p>
+            <p class="date">{{reply.updated_at}}</p>
           </div>
           <p>{{reply.contents}}</p>
         </li>
@@ -52,6 +52,19 @@ export default {
   }
 }
 </script>
-
-<style scoped>
+<style lang="less" scoped>
+  .ie9 {
+    .detail {
+      .email, .date {
+        display: inline-block;
+      }
+      .email {
+        padding-right: 10px;
+        border-right: 1px solid rgba(0,0,0,.125);
+      }
+      .date {
+        padding-left: 10px;
+      }
+    }
+  }
 </style>

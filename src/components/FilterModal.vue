@@ -73,3 +73,24 @@ export default {
   }
 }
 </script>
+<style lang="less" scoped>
+  .ie9 {
+    .modal {
+      .close {
+        margin-top: -40px;
+      }
+      .modal-body {
+        ul {
+          text-align: center;
+          li {
+            display: inline-block;
+            margin-right: 50px;
+          }
+          li:last-child {
+            margin-right: 0;
+          }
+        }
+      }
+    }
+  }
+</style>

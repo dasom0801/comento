@@ -6,8 +6,8 @@
     <p class="alert alert-primary col-lg-6 col-md-8 mx-auto" role="alert" v-show="showSearchAlert">
       검색어를 입력해주세요.
     </p>
-    <div class="row justify-content-between mb-3">
-      <div class="row">
+    <div class="select-group row justify-content-between mb-3">
+      <div class="filter-group row">
         <button class="filter mr-2 btn btn-primary" data-toggle="modal" data-target="#filter-modal">필터</button>
         <p class="py-2"> {{checkedCategoryName}}</p>
         <filter-modal
@@ -266,6 +266,29 @@ export default {
         margin-top: -1.5rem;
         width: 3rem;
         height: 3rem;
+      }
+    }
+  }
+  .ie9 {
+    .main {
+      .select-group {
+        .filter-group {
+          float: left;
+          p {
+            display: inline-block;
+          }
+        }
+        .sort {
+          float: right;
+          li {
+            display: inline-block;
+          }
+        }
+      }
+      .select-group:after{
+        content: '';
+        display: block;
+        clear: both
       }
     }
   }
