@@ -64,10 +64,14 @@ export default {
   created () {
     this.fetchContentList({order: 'asc'})
     this.fetchCategory()
+    !localStorage.getItem('category') && this.setCategory('1,2,3')
+    !localStorage.getItem('order') && this.setOrder('asc')
   },
   mounted () {
     window.scrollTo(0, 0)
     window.addEventListener('scroll', this.handleScroll)
+    this.getCategory()
+    this.getOrder()
   },
   destroyed () {
     window.removeEventListener('scroll', this.handleScroll)
@@ -103,6 +107,7 @@ export default {
     checkedCategory: function () {
       this.resetData()
       this.fetchContentList()
+      this.setCategory(this.checkedCategory)
     }
   },
   methods: {
@@ -174,7 +179,7 @@ export default {
     // 오름차순, 내림차순 정렬 변경
     toggleSort (order) {
       if (this.order === order) return false
-      this.order = this.order === 'asc' ? 'desc' : 'asc'
+      this.setOrder(order)
       this.resetData()
       this.fetchContentList()
     },
@@ -200,6 +205,27 @@ export default {
     // 키워드 검색
     inputKeyword (event) {
       this.searchKeyword = event.target.value
+    },
+    // 필터와 정렬 localstorage에서 관리
+    // localstorage를 지원하지 않는 브라우저는 data사용
+    setCategory (category) {
+      if (localStorage) {
+        localStorage.setItem('category', category)
+      } else {
+        this.checkedCategory = category
+      }
+    },
+    setOrder (order) {
+      if (localStorage) {
+        localStorage.setItem('order', order)
+      }
+      this.getOrder()
+    },
+    getCategory () {
+      this.checkedCategory = localStorage ? localStorage.getItem('category') : '1,2,3'
+    },
+    getOrder () {
+      this.order = localStorage ? localStorage.getItem('order') : 'asc'
     }
   }
 }
@@ -209,6 +235,11 @@ export default {
     padding: 15px;
     .row {
       padding: 0 15px;
+    }
+    .input-group {
+      .form-control {
+        width: 100%;
+      }
     }
     .sort {
       li button {
