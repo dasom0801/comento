@@ -1,5 +1,11 @@
 <template>
   <div class="main container">
+    <div class="input-group col-lg-6 col-md-8 mx-auto mb-3">
+      <input type="text" v-model="searchKeyword" @keyup="inputKeyword($event)" class="form-control" placeholder="검색어를 입력해주세요." aria-label="검색어를 입력해주세요.">
+    </div>
+    <p class="alert alert-primary col-lg-6 col-md-8 mx-auto" role="alert" v-show="showSearchAlert">
+      검색어를 입력해주세요.
+    </p>
     <div class="row justify-content-between mb-3">
       <div class="row">
         <button class="filter mr-2 btn btn-primary" data-toggle="modal" data-target="#filter-modal">필터</button>
@@ -19,7 +25,7 @@
       </ul>
     </div>
     <ul class="contents">
-      <li class="card mb-4 pl-3 pr-3" v-for="(item, index) in printList" :key="item.email ? 'content' + item.no : 'ad' + index">
+      <li class="card mb-4 pl-3 pr-3" v-for="(item, index) in filteredList" :key="item.email ? 'content' + item.no : 'ad' + index">
         <content-item v-if="item.email"
           :categoryList="categoryList"
           :category="item.category_no"
@@ -70,6 +76,7 @@ export default {
     return {
       page: 0,
       order: 'asc',
+      searchKeyword: '',
       isLoading: false,
       categoryList: [],
       checkedCategory: '1,2,3',
@@ -82,6 +89,14 @@ export default {
     checkedCategoryName () {
       return this.categoryList.filter(category => this.checkedCategory.indexOf(category.no) > -1)
         .map(category => category.name).join(', ')
+    },
+    filteredList () {
+      return this.searchKeyword.trim().length
+        ? this.printList.filter(item => item.email && (item.title.toLowerCase().indexOf(this.searchKeyword.toLowerCase()) > -1 || item.contents.toLowerCase().indexOf(this.searchKeyword.toLowerCase()) > -1))
+        : this.printList
+    },
+    showSearchAlert () {
+      return this.searchKeyword !== '' && !this.searchKeyword.trim().length
     }
   },
   watch: {
@@ -181,6 +196,10 @@ export default {
     // 로딩 표시를 위한 값
     changeLoadingStatus (bool) {
       this.isLoading = bool
+    },
+    // 키워드 검색
+    inputKeyword (event) {
+      this.searchKeyword = event.target.value
     }
   }
 }
